@@ -64,7 +64,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 - On **Server Manager**, click the flag icon and then click **Promote this server to a domain controller** (screenshot below)
   
-- <img width="390" height="194" alt="Screenshot 2025-09-24 at 3 13 35 PM" src="https://github.com/user-attachments/assets/695d73b6-3c6c-4ea5-98f1-27db17d871dd" />
+<img width="390" height="194" alt="Screenshot 2025-09-24 at 3 13 35 PM" src="https://github.com/user-attachments/assets/695d73b6-3c6c-4ea5-98f1-27db17d871dd" />
 
 - Click **Add a new forest**
 - In the root domain name, type: **mydomain.com**
@@ -151,18 +151,67 @@ This tutorial outlines the implementation of on-premises Active Directory within
 - Type **domain admins** in the object names box (screenshot below)
 - Click **Check Names**. Once you do this it the text box will underline what you type and it should show as Domain Admins (underlined).
 - This means that the correct object name for Domain Admins was found.
-- Click OK
+- Click Apply -> OK
 
 <img width="451" height="243" alt="Screenshot 2025-09-24 at 3 55 59 PM" src="https://github.com/user-attachments/assets/37475034-4a8a-4823-b1e4-d01ba3850641" />
 
 
+- Now that Jane Doe has been added to the **Domain Admins** security group, let's log out of the Domain Controller
+- We are going to login as Jane Doe.
 
 
+## Step 3: Join client-1 to your Domain (mydomain.com)
+
+- If you remember from the previous section of our lab we have already configured **client-1**'s DNS settings to point to **dc-1**'s **Private IP Address**
+- If you haven't done so you can refer to the <a href="https://github.com/maggiemachuca/azure-prep-for-ad">previous section</a> and refer to Step 5. 
+
+- Log into **client-1** using your original **local admin** credentials
+- Click the Windows icon -> System -> **Rename this PC (advanced)**
+
+- Click on the **Computer Name** tab -> Change (screenshot below)
+
+<img width="408" height="464" alt="Screenshot 2025-09-24 at 4 11 12 PM" src="https://github.com/user-attachments/assets/c2bc1200-162c-4c50-b39e-14892f75c1d6" />
+
+- Click **Domain** under **Member of**
+- Type **mydomain.com**
+
+<img width="317" height="385" alt="Screenshot 2025-09-24 at 4 12 44 PM" src="https://github.com/user-attachments/assets/9e6d105a-7c9c-48d1-9fc9-0dc5413c90ae" />
+
+- You will get this window if you successfully pointed **client-1** to **dc-1**'s private IP address in the DNS settings in a step we did earlier. (screenshot below)
+- This means **client-1** was able to find our domain controller.
+- Type in the domain name along with the user credentials
+- In this case it is **mydomain.com\jane_admin**
+- Click OK
+
+<img width="454" height="295" alt="Screenshot 2025-09-24 at 4 15 55 PM" src="https://github.com/user-attachments/assets/6b467bde-793a-499b-a122-430fec5070c5" />
+
+- You should get this window if you were successful.
+- You will then get a prompt to restart your computer.
+- Click Restart Now
+
+<img width="293" height="144" alt="Screenshot 2025-09-24 at 4 19 00 PM" src="https://github.com/user-attachments/assets/37697cfe-4133-4da6-9268-0825b652d51a" />
+
+- Now we are going to log back into our domain controller **dc-1** to verify that **client-1** shows up in ADUC (Active Directory Users and Computers).
+- Click the search bar
+- Type in **Active Directory Users and Computers**
+
+- Expand **mydomain.com**
+- Click on the **Computers** folder
+- You should be able to see **client-1** in our window. (screenshot below)
+  
+<img width="750" height="524" alt="Screenshot 2025-09-24 at 4 22 57 PM" src="https://github.com/user-attachments/assets/34474ead-a000-467e-aa41-077bc0ae7b05" />
 
 
+- Next we are going to create a new **Organizational Unit** called **_CLIENTS**
+- Right-click mydomain.com -> New -> Organizational Unit
 
+<img width="662" height="402" alt="Screenshot 2025-09-24 at 4 25 29 PM" src="https://github.com/user-attachments/assets/545647f5-4b69-4f29-a106-4c12f2dcd1aa" />
 
-
+- Now that you created this OU, let's put our client-1 machine into the **_CLIENTS** OU folder
+- Click and drag client-1 into the **_CLIENTS** folder
+- You'll get this pop-up, click Yes
+  
+<img width="466" height="169" alt="Screenshot 2025-09-24 at 4 27 51 PM" src="https://github.com/user-attachments/assets/6b83a785-e1fe-46c1-b457-e5dd8ef8f9ce" />
 
 
 
