@@ -5,17 +5,12 @@
 <h1>On-premises Active Directory Deployed in the Cloud (Azure)</h1>
 This tutorial outlines the implementation of on-premises Active Directory within Azure Virtual Machines.<br />
 
-
-<h2>Video Demonstration</h2>
-
-- ### [YouTube: How to Deploy on-premises Active Directory within Azure Compute](https://www.youtube.com)
-
 <h2>Environments and Technologies Used</h2>
 
 - Microsoft Azure (Virtual Machines/Compute)
 - Remote Desktop
 - Active Directory Domain Services
-- PowerShell
+- PowerShell ISE
 
 <h2>Operating Systems Used </h2>
 
@@ -24,14 +19,15 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 <h2>High-Level Deployment and Configuration Steps</h2>
 
-- Step 1
-- Step 2
-- Step 3
-- Step 4
+- Step 1: Install Active Directory Domain Services on DC-1
+- Step 2: Create a Domain Admin user within the domain
+- Step 3: Join CLIENT-1 to your Domain (mydomain.com)
+- Step 4: Setup Remote Desktop for Non-Admin Users on CLIENT-1
+- Step 5: Create Domain Users & Test Login as a User
 
 <h2>Deployment and Configuration Steps</h2>
 
-## Step 1: Install Active Directory Domain Services on dc-1
+## Step 1: Install Active Directory Domain Services on DC-1
 
 - Navigate to **Server Manager**
 - Click on **Add roles and features**
@@ -77,7 +73,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 <img width="465" height="98" alt="Screenshot 2025-09-24 at 3 17 20 PM" src="https://github.com/user-attachments/assets/309f4a7e-0dae-4173-9df7-75ad425f465f" />
 
-- In DNS options, uncheck **Create DNS delegation** (why?)
+- In DNS options, uncheck **Create DNS delegation**
 - Click next.
 
 - In additional options, you can leave the **NetBIOS domain name** alone.
@@ -160,7 +156,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 - We are going to login as Jane Doe.
 
 
-## Step 3: Join client-1 to your Domain (mydomain.com)
+## Step 3: Join CLIENT-1 to your Domain (mydomain.com)
 
 - If you remember from the previous section of our lab we have already configured **client-1**'s DNS settings to point to **dc-1**'s **Private IP Address**
 - If you haven't done so you can refer to the <a href="https://github.com/maggiemachuca/azure-prep-for-ad">previous section</a> and refer to Step 5. 
@@ -214,7 +210,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 <img width="466" height="169" alt="Screenshot 2025-09-24 at 4 27 51 PM" src="https://github.com/user-attachments/assets/6b83a785-e1fe-46c1-b457-e5dd8ef8f9ce" />
 
 
-## Step 4: Setup Remote Desktop for non-administrative users on Client-1
+## Step 4: Setup Remote Desktop for Non-Admin Users on CLIENT-1
 
 - Log into client-1 as the user **jane_admin**
 - Right click on the Start menu -> System -> Remote Desktop 
@@ -235,11 +231,64 @@ This tutorial outlines the implementation of on-premises Active Directory within
 <img width="373" height="331" alt="Screenshot 2025-09-24 at 4 39 53 PM" src="https://github.com/user-attachments/assets/c0d0c59f-45e8-4fa3-8923-09948d13e347" />
 
 
-## Step 5: Create additional users and attempt to log into client-1 as a user
+## Step 5: Create Domain Users & Test Login as a User
 
+- Log onto dc-1 as the user **jane_admin**
+- Click on Start Menu
+- In the search bar type in **Windows PowerShell ISE**, right-click and **Run as administrator**
 
+- Once it opens, click on **New script** on the top-left corner
+- Name the file **Create users** and save it onto the desktop
+- We are going to use a script from github to create our users
+- <a href="https://github.com/joshmadakor1/AD_PS/blob/master/Generate-Names-Create-Users.ps1">Click here</a> to get the script (it will open a new page on your browser)
+- On github you should see an on option to **Copy raw file**. Click this.
 
+<img width="1108" height="156" alt="Screenshot 2025-09-24 at 5 02 39 PM" src="https://github.com/user-attachments/assets/e12bd1cd-b642-40d7-9d9b-11a14cb8f3d5" />
 
+- Now paste what you just copied into **Windows PowerShell ISE**
+- If it successfully pasted your window should look something like this: (screenshot below)
+- Save one more time
+
+<img width="1277" height="744" alt="Screenshot 2025-09-24 at 5 07 38 PM" src="https://github.com/user-attachments/assets/797e1cfa-79a3-47ab-9b6f-fa1cecdf9c18" />
+
+- Click **Run script**
+- You'll notice that the script is running now and hundreds of users are being created (screenshot below)
+- As you wait for this script to finish, observe the contents of the script
+- Take note that there is a **default password** set for all of these users. We will use this in a few steps.
+  
+<img width="248" height="283" alt="Screenshot 2025-09-24 at 5 08 33 PM" src="https://github.com/user-attachments/assets/5e85e484-e252-4e4a-ae48-8bc9570d220b" />
+
+- This script will place these users into the appropriate OU, which is **_EMPLOYEES**
+- Since we are creating so many users this may take a few minutes to finish.
+- **You do not have to wait for the script to finish to continue.**
+
+- Click the Start Menu and type **Active Directory Users and Computers**
+- Expand mydomain.com
+- Click on _EMPLOYEES
+- Note all of the users in this Window that the PowerShell script created.
+
+<img width="747" height="519" alt="Screenshot 2025-09-24 at 5 12 51 PM" src="https://github.com/user-attachments/assets/e68d3fab-2bcd-4bb4-9763-f0be28c2c696" />
+
+- You may start this step if your script is finished or not.
+- Pick a user from your list of users (note: We will have different users from each other, so please take note of the one you select)
+- In my example I'll pick **duv.ros** as the user.
+- Log out of your **client-1** machine if you are still logged in.
+  
+<img width="150" height="28" alt="Screenshot 2025-09-24 at 5 19 37 PM" src="https://github.com/user-attachments/assets/58b76dc1-b87f-40af-96d0-1e594247a16b" />
+
+- Log into **client-1** as the user you picked
+- Don't forget to type in the domain name when logging back in.
+  
+<img width="434" height="234" alt="Screenshot 2025-09-24 at 5 21 31 PM" src="https://github.com/user-attachments/assets/63a9ebc9-ce46-4307-8a82-17e22bb6be05" />
+
+- You should be logged into **client-1** now as the user (duv.ros)
+- Open the Command Prompt. Note how your username appears here (screenshot below)
+
+<img width="424" height="111" alt="Screenshot 2025-09-24 at 5 23 42 PM" src="https://github.com/user-attachments/assets/4897d1c7-6908-4c84-9c6e-af534ec5f725" />
+
+- That's it for now. You can log out of this **client-1** VM for now.
+
+- In the next section we will be applying Group Policy and Managing Accounts! (to be continued)
 
 
 <br />
