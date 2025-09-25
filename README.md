@@ -3,7 +3,8 @@
 </p>
 
 <h1>On-premises Active Directory Deployed in the Cloud (Azure)</h1>
-This tutorial outlines the implementation of on-premises Active Directory within Azure Virtual Machines.<br />
+In this tutorial we build an Active Directory environment in Azure, complete with domain controller setup, client domain joining, remote access configuration, and automated user provisioning with PowerShell.
+<br />
 
 <h2>Environments and Technologies Used</h2>
 
@@ -36,7 +37,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 <img width="623" height="335" alt="Screenshot 2025-09-24 at 3 00 37 PM" src="https://github.com/user-attachments/assets/16339968-7ecc-4b39-8b2a-ba686f61b60c" />
 
 - On Server Selection, choose the domain controller.
-- In this case it is **dc-1**
+- In this case it is **DC-1**
 
 <img width="786" height="560" alt="Screenshot 2025-09-24 at 3 02 25 PM" src="https://github.com/user-attachments/assets/a0df264b-86e1-497d-97f4-f06d05242a45" />
 
@@ -56,7 +57,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 
 - Now that we've installed Active Directory, we have to setup this VM to become our domain controller.
-- Let's set up the **dc-1** VM in a new Active Directory forest.
+- Let's set up the **DC-1** VM in a new Active Directory forest.
 
 - On **Server Manager**, click the flag icon and then click **Promote this server to a domain controller** (screenshot below)
   
@@ -158,10 +159,10 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 ## Step 3: Join CLIENT-1 to your Domain (mydomain.com)
 
-- If you remember from the previous section of our lab we have already configured **client-1**'s DNS settings to point to **dc-1**'s **Private IP Address**
+- If you remember from the previous section of our lab we have already configured **CLIENT-1**'s DNS settings to point to **DC-1**'s **Private IP Address**
 - If you haven't done so you can refer to the <a href="https://github.com/maggiemachuca/azure-prep-for-ad">previous section</a> and refer to Step 5. 
 
-- Log into **client-1** using your original **local admin** credentials
+- Log into **CLIENT-1** using your original **local admin** credentials
 - Click the Windows icon -> System -> **Rename this PC (advanced)**
 
 - Click on the **Computer Name** tab -> Change (screenshot below)
@@ -173,8 +174,8 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 <img width="317" height="385" alt="Screenshot 2025-09-24 at 4 12 44 PM" src="https://github.com/user-attachments/assets/9e6d105a-7c9c-48d1-9fc9-0dc5413c90ae" />
 
-- You will get this window if you successfully pointed **client-1** to **dc-1**'s private IP address in the DNS settings in a step we did earlier. (screenshot below)
-- This means **client-1** was able to find our domain controller.
+- You will get this window if you successfully pointed **CLIENT-1** to **DC-1**'s private IP address in the DNS settings in a step we did earlier. (screenshot below)
+- This means **CLIENT-1** was able to find our domain controller.
 - Type in the domain name along with the user credentials
 - In this case it is **mydomain.com\jane_admin**
 - Click OK
@@ -187,13 +188,13 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 <img width="293" height="144" alt="Screenshot 2025-09-24 at 4 19 00 PM" src="https://github.com/user-attachments/assets/37697cfe-4133-4da6-9268-0825b652d51a" />
 
-- Now we are going to log back into our domain controller **dc-1** to verify that **client-1** shows up in ADUC (Active Directory Users and Computers).
+- Now we are going to log back into our domain controller **DC-1** to verify that **CLIENT-1** shows up in ADUC (Active Directory Users and Computers).
 - Click the search bar
 - Type in **Active Directory Users and Computers**
 
 - Expand **mydomain.com**
 - Click on the **Computers** folder
-- You should be able to see **client-1** in our window. (screenshot below)
+- You should be able to see **CLIENT-1** in our window. (screenshot below)
   
 <img width="750" height="524" alt="Screenshot 2025-09-24 at 4 22 57 PM" src="https://github.com/user-attachments/assets/34474ead-a000-467e-aa41-077bc0ae7b05" />
 
@@ -203,8 +204,8 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 <img width="662" height="402" alt="Screenshot 2025-09-24 at 4 25 29 PM" src="https://github.com/user-attachments/assets/545647f5-4b69-4f29-a106-4c12f2dcd1aa" />
 
-- Now that you created this OU, let's put our client-1 machine into the **_CLIENTS** OU folder
-- Click and drag client-1 into the **_CLIENTS** folder
+- Now that you created this OU, let's put our CLIENT-1 machine into the **_CLIENTS** OU folder
+- Click and drag CLIENT-1 into the **_CLIENTS** folder
 - You'll get this pop-up, click Yes
   
 <img width="466" height="169" alt="Screenshot 2025-09-24 at 4 27 51 PM" src="https://github.com/user-attachments/assets/6b83a785-e1fe-46c1-b457-e5dd8ef8f9ce" />
@@ -212,7 +213,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 ## Step 4: Setup Remote Desktop for Non-Admin Users on CLIENT-1
 
-- Log into client-1 as the user **jane_admin**
+- Log into CLIENT-1 as the user **jane_admin**
 - Right click on the Start menu -> System -> Remote Desktop 
 - Click on **Select users that can remotely access this PC** (screenshot below)
 - Click add
@@ -233,7 +234,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 ## Step 5: Create Domain Users & Test Login as a User
 
-- Log onto dc-1 as the user **jane_admin**
+- Log onto DC-1 as the user **jane_admin**
 - Click on Start Menu
 - In the search bar type in **Windows PowerShell ISE**, right-click and **Run as administrator**
 
@@ -272,23 +273,35 @@ This tutorial outlines the implementation of on-premises Active Directory within
 - You may start this step if your script is finished or not.
 - Pick a user from your list of users (note: We will have different users from each other, so please take note of the one you select)
 - In my example I'll pick **duv.ros** as the user.
-- Log out of your **client-1** machine if you are still logged in.
+- Log out of your **CLIENT-1** machine if you are still logged in.
   
 <img width="150" height="28" alt="Screenshot 2025-09-24 at 5 19 37 PM" src="https://github.com/user-attachments/assets/58b76dc1-b87f-40af-96d0-1e594247a16b" />
 
-- Log into **client-1** as the user you picked
+- Log into **CLIENT-1** as the user you picked
 - Don't forget to type in the domain name when logging back in.
   
 <img width="434" height="234" alt="Screenshot 2025-09-24 at 5 21 31 PM" src="https://github.com/user-attachments/assets/63a9ebc9-ce46-4307-8a82-17e22bb6be05" />
 
-- You should be logged into **client-1** now as the user (duv.ros)
+- You should be logged into **CLIENT-1** now as the user (duv.ros)
 - Open the Command Prompt. Note how your username appears here (screenshot below)
 
 <img width="424" height="111" alt="Screenshot 2025-09-24 at 5 23 42 PM" src="https://github.com/user-attachments/assets/4897d1c7-6908-4c84-9c6e-af534ec5f725" />
 
-- That's it for now. You can log out of this **client-1** VM for now.
+- That's it for now. You can log out of this **CLIENT-1** VM for now.
 
 - In the next section we will be applying Group Policy and Managing Accounts! (to be continued)
+
+# Summary at a High-Level Overview:
+
+- **Deployed Active Directory in Azure**: Installed and configured Active Directory Domain Services on a Windows Server 2022 VM (DC-1) hosted in Microsoft Azure, promoting it to a domain controller within a new forest.
+
+- **Domain Admin Setup**: Created custom Organizational Units (_EMPLOYEES, _ADMINS), added a new domain admin account (jane_admin), and assigned appropriate group memberships using Active Directory Users and Computers.
+
+- **Client Domain Join**: Configured DNS and successfully joined a Windows 10 client VM (CLIENT-1) to the domain, verifying connectivity and object creation (**Domain Admins** and **Domain Users**) within ADUC.
+
+- **Enabled RDP for Domain Users**: Configured Remote Desktop access on the client machine to allow non-admin users remote access by assigning the “Domain Users” group.
+
+- **Automated User Provisioning**: Used a PowerShell script to create hundreds of domain users automatically and tested domain login as one of the new users on the joined client VM.
 
 
 <br />
